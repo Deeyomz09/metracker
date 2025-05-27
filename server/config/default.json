@@ -1,4 +1,0 @@
-{
-  "mongoURI": "mongodb+srv://nananadiomz:Ehsulee042424@metrackerweb.ddkiryi.mongodb.net/?retryWrites=true&w=majority&appName=metrackerweb",
-  "jwtSecret": "mysecrettoken"
-}
