@@ -1,8 +1,34 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, Navigate } from "react-router-dom";
+import { connect } from "react-redux";
+import { setAlert } from "../../actions/alert";
+import { register } from "../../actions/auth";
 import logoname from "../../assets/logoname.png";
+import PropTypes from "prop-types";
 
-const Register = () => {
+const Register = ({ setAlert, register, isAuthenticated }) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    password2: ""
+  });
+
+  const { name, email, password, password2 } = formData;
+  const onChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    if (password !== password2) {
+      setAlert("Password do not match", "danger");
+    } else {
+      register({ name, email, password });
+    }
+  };
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" />;
+  }
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -19,8 +45,8 @@ const Register = () => {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm ">
           <form
-            action="#"
-            method="POST"
+            onSubmit={onSubmit}
+            action="create-profile.html"
             className="space-y-6"
           >
             <div>
@@ -35,8 +61,9 @@ const Register = () => {
                   id="name"
                   name="name"
                   type="text"
+                  value={name}
+                  onChange={onChange}
                   required
-                  autoComplete="name"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                 />
               </div>
@@ -53,8 +80,9 @@ const Register = () => {
                   id="email"
                   name="email"
                   type="email"
+                  value={email}
+                  onChange={onChange}
                   required
-                  autoComplete="email"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                 />
               </div>
@@ -74,9 +102,10 @@ const Register = () => {
                   id="password"
                   name="password"
                   type="password"
+                  value={password}
+                  onChange={onChange}
                   required
-                  autoComplete="current-password"
-                  minLength="6"
+                  minLength="8"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                 />
               </div>
@@ -95,9 +124,10 @@ const Register = () => {
                   id="password2"
                   name="password2"
                   type="password"
+                  value={password2}
+                  onChange={onChange}
                   required
-                  autoComplete="current-password"
-                  minLength="6"
+                  minLength="8"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                 />
               </div>
@@ -129,4 +159,14 @@ const Register = () => {
   );
 };
 
-export default Register;
+Register.propTypes = {
+  setAlert: PropTypes.func.isRequired,
+  register: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool
+};
+
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
+export default connect(mapStateToProps, { setAlert, register })(Register);

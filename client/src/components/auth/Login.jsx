@@ -1,10 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import logoname from "../../assets/logoname.png";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { login } from "../../actions/auth";
 
-const Login = () => {
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+
+const Login = ({ login, isAuthenticated }) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
+
+  const { email, password } = formData;
+
+  const onChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    login(email, password);
+  };
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" />;
+  }
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 ">
+    <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8 ">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <img
           alt="Your Company"
@@ -18,9 +40,9 @@ const Login = () => {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form
-          action="#"
-          method="POST"
-          className="space-y-6"
+          onSubmit={(e) => onSubmit(e)}
+          action="create-profile.html"
+          className="space-y-6 form"
         >
           <div>
             <label
@@ -31,11 +53,11 @@ const Login = () => {
             </label>
             <div className="mt-2">
               <input
-                id="email"
-                name="email"
                 type="email"
+                name="email"
+                value={email}
+                onChange={(e) => onChange(e)}
                 required
-                autoComplete="email"
                 className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
               />
             </div>
@@ -60,10 +82,12 @@ const Login = () => {
             </div>
             <div className="mt-2">
               <input
-                id="password"
-                name="password"
                 type="password"
+                name="password"
+                value={password}
+                onChange={(e) => onChange(e)}
                 required
+                minLength="8"
                 autoComplete="current-password"
                 className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
               />
@@ -74,7 +98,6 @@ const Login = () => {
             <button
               type="submit"
               className="flex w-full justify-center rounded-md bg-blue-400 px-3 py-1.5 text-sm/6 font-sold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              emib
             >
               Sign in
             </button>
@@ -84,7 +107,6 @@ const Login = () => {
         <p className="mt-10 text-center text-sm/6 text-gray-500">
           Not a member?{" "}
           <Link
-            Link
             to="/register"
             className="font-semibold text-indigo-600 hover:text-indigo-500"
           >
@@ -96,4 +118,13 @@ const Login = () => {
   );
 };
 
-export default Login;
+login.PropTypes = {
+  login: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool
+};
+
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
+export default connect(mapStateToProps, { login })(Login);
