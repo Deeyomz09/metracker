@@ -4,7 +4,7 @@ import { RiDashboardFill } from "react-icons/ri";
 import { AiOutlineTransaction } from "react-icons/ai";
 import { SiActualbudget } from "react-icons/si";
 import { TbReportAnalytics, TbSettings, TbLogout } from "react-icons/tb";
-import { MdCategory } from "react-icons/md";
+import { MdAnalytics, MdCategory } from "react-icons/md";
 import { useState } from "react";
 import logo from "../../assets/logo.png";
 
@@ -13,24 +13,26 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { logout } from "../../actions/auth";
 
-const Navbar = ({ logout }) => {
-  const [open, setOpen] = useState(true);
+const Navbar = ({ open, setOpen, logout }) => {
+  // const [open, setOpen] = useState(true);
 
   const Menus = [
-    { title: "Dashboard" },
-    { title: "Transaction", icon: <AiOutlineTransaction /> },
-    { title: "Categories", icon: <MdCategory /> },
-    { title: "Report", icon: <TbReportAnalytics /> },
-    { title: "Budget", icon: <SiActualbudget /> },
+    { title: "Dashboard", path: "/dashboard" },
+    {
+      title: "Transaction",
+      icon: <AiOutlineTransaction />,
+      path: "/transaction"
+    },
+    { title: "Analytics / Reports", icon: <MdCategory />, path: "/analytics" },
     { title: "Settings", icon: <TbSettings /> },
     { title: "Logout", icon: <TbLogout /> }
   ];
 
   return (
     <div
-      className={`bg-slate-700 h-screen p-5 pt-8 ${
-        open ? "w-100" : "w-23"
-      } duration-300 relative`}
+      className={` bg-slate-700 h-screen p-5 pt-8 ${
+        open ? "w-80" : "w-24"
+      } duration-300 fixed`}
     >
       <BsArrowLeftShort
         className={`bg-white text-black text-3xl rounded-full absolute -right-3 top-9 border border-black cursor-pointer ${
@@ -56,8 +58,8 @@ const Navbar = ({ logout }) => {
         </h1>
       </div>
       <ul className="pt-2">
-        {Menus.map((menu) => (
-          <>
+        {Menus.map((menu) => {
+          const menuItem = (
             <li
               key={menu.title}
               className="text-gray-300 text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-white/5 rounded-md mt-2"
@@ -74,15 +76,28 @@ const Navbar = ({ logout }) => {
                 {menu.title}
               </span>
             </li>
-          </>
-        ))}
+          );
+
+          return menu.path ? (
+            <Link
+              key={menu.title}
+              to={menu.path}
+            >
+              {menuItem}
+            </Link>
+          ) : (
+            <Fragment key={menu.title}>{menuItem}</Fragment>
+          );
+        })}
       </ul>
     </div>
   );
 };
 
 Navbar.propTypes = {
-  logout: PropTypes.func.isRequired
+  logout: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  setOpen: PropTypes.func.isRequired
 };
 
 export default connect(null, { logout })(Navbar);

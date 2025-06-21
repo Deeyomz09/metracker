@@ -5,6 +5,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./index.css";
 import Navbar from "./components/layout/Navbar";
 import Dashboard from "./components/dashboard/Dashboard";
+import Transaction from "./components/dashboard/Transaction";
+
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import PrivateRoute from "./components/routing/PrivateRoute";
@@ -36,25 +38,27 @@ const App = () => {
   }, []);
   return (
     <Provider store={store}>
-      <div className="flex">
-        <Router>
-          <Alert />
-          <Routes>
-            <Route
-              path="/"
-              element={<Login />}
-            />
-            <Route
-              path="/register"
-              element={<Register />}
-            />
-            <Route
-              path="/dashboard"
-              element={<PrivateRoute component={Dashboard} />}
-            />
-          </Routes>
-        </Router>
-      </div>
+      <Router>
+        <Alert />
+        <Routes>
+          <Route
+            path="/"
+            element={<Login />}
+          />
+          <Route
+            path="/register"
+            element={<Register />}
+          />
+          <Route
+            path="/dashboard"
+            element={<PrivateRoute component={Dashboard} />}
+          />
+          <Route
+            path="/transaction"
+            element={<PrivateRoute component={Transaction} />}
+          />
+        </Routes>
+      </Router>
     </Provider>
   );
 };

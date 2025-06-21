@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../../models/User");
 const Income = require("../../models/Income");
 const auth = require("../../middleware/auth");
 const xlsx = require("xlsx");

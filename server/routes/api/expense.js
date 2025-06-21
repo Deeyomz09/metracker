@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../../models/User");
 const Expense = require("../../models/Expense");
 const auth = require("../../middleware/auth");
 const xlsx = require("xlsx");
@@ -37,9 +36,14 @@ router.post("/add", auth, async (req, res) => {
 
 // need tofix // need to add by id:
 router.get("/getAllExpense", auth, async (req, res) => {
+  // add pagination
+
   const userId = req.user.id;
   try {
-    const expense = await Expense.find({ userId }).sort({
+    const expense = await Expense.find(
+      { userId },
+      { source: 1, amount: 1, date: 1, _id: 0 }
+    ).sort({
       date: -1
     });
 
