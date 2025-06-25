@@ -36,18 +36,31 @@ router.post("/add", auth, async (req, res) => {
 
 // need tofix // need to add by id:
 router.get("/getAllExpense", auth, async (req, res) => {
-  // add pagination
-
   const userId = req.user.id;
+  // add pagination
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+  const skip = (page - 1) * limit;
+
   try {
     const expense = await Expense.find(
       { userId },
       { source: 1, amount: 1, date: 1, _id: 0 }
-    ).sort({
-      date: -1
-    });
+    )
+      .sort({
+        date: -1
+      })
+      .skip(skip)
+      .limit(limit);
 
-    res.json(expense);
+    const total = await Expense.countDocuments({ userId });
+
+    res.json({
+      expense,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalItems: total
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });

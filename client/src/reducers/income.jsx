@@ -1,7 +1,7 @@
-import { GET_EXPENSES_SIMPLE, EXPENSES_ERROR } from "../actions/types";
+import { GET_INCOMES_SIMPLE, INCOMES_ERROR } from "../actions/types";
 
 const initialState = {
-  simpleExpenses: [],
+  simpleIncomes: [],
   loading: true,
   error: null,
   currentPage: 1,
@@ -9,21 +9,21 @@ const initialState = {
   totalItems: 0
 };
 
-export default function expenseReducer(state = initialState, action) {
+export default function incomeReducer(state = initialState, action) {
   const { type, payload } = action;
 
   switch (type) {
-    case GET_EXPENSES_SIMPLE:
+    case GET_INCOMES_SIMPLE:
       return {
         ...state,
-        simpleExpenses: payload.expense,
+        simpleIncomes: payload.income,
         currentPage: payload.currentPage,
         totalPages: payload.totalPages,
         totalItems: payload.totalItems,
         loading: false,
         error: null
       };
-    case EXPENSES_ERROR:
+    case INCOMES_ERROR:
       return {
         ...state,
         error: payload,

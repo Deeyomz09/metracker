@@ -35,14 +35,32 @@ router.post("/add", auth, async (req, res) => {
 //@desc Add Income
 //@access Private
 
-// need tofix // need to add by id:
 router.get("/getAllIncome", auth, async (req, res) => {
-  try {
-    const incomes = await Income.find({ userId: req.user.id }).sort({
-      date: -1
-    });
+  const userId = req.user.id;
+  // add pagination
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+  const skip = (page - 1) * limit;
 
-    res.json(incomes);
+  try {
+    const income = await Income.find(
+      { userId },
+      { source: 1, amount: 1, date: 1, _id: 0 }
+    )
+      .sort({
+        date: -1
+      })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Expense.countDocuments({ userId });
+
+    res.json({
+      income,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalItems: total
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
